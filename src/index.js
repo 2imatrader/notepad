@@ -8,7 +8,12 @@ export default {
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/').filter(p => p);
     let noteId = pathParts[0];
-
+// 在 fetch 函数的最开始添加这个判断
+if (url.pathname === '/test') {
+  return new Response('Worker 在自定义域名下工作正常，路径 /test 可达', {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+  });
+}
     // Generate random ID if none provided
     if (!noteId) {
       const newId = generateId();

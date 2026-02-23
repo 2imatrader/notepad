@@ -7,4 +7,7 @@ compatibility_date = "2024-01-01"
 # Get it from: Cloudflare Dashboard > Workers & Pages > KV
 [[kv_namespaces]]
 binding = "NOTES"
-id = "4045d66d09c340988e77036db903824d"
+id = ""kv_namespaces": [{
+                    "binding": "KV_BINDING",
+                    "id": "25b0896228384e38bd84909232609673"
+                 }]"

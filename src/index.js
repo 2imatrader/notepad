@@ -8,12 +8,7 @@ export default {
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/').filter(p => p);
     let noteId = pathParts[0];
-// 在 fetch 函数的最开始添加这个判断
-if (url.pathname === '/test') {
-  return new Response('Worker 在自定义域名下工作正常，路径 /test 可达', {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-  });
-}
+
     // Generate random ID if none provided
     if (!noteId) {
       const newId = generateId();
@@ -110,7 +105,7 @@ function escapeHtml(text) {
 }
 
 /**
- * Render the HTML interface
+ * Render the HTML interface (默认 darkmode)
  */
 function renderHTML(noteId, content) {
   return `<!DOCTYPE html>
@@ -171,7 +166,7 @@ body {
   background: #ddd;
 }
 
-/* Dark theme */
+/* Dark theme (默认启用) */
 body.dark {
   background: #333b4d;
   color: #fff;
@@ -198,7 +193,7 @@ body.dark textarea::selection {
 }
 </style>
 </head>
-<body>
+<body class="dark">
 <div class="container">
 <textarea id="content" placeholder="Start typing...">${escapeHtml(content)}</textarea>
 </div>
@@ -285,12 +280,39 @@ document.getElementById('deleteLink').onclick = function() {
   return false;
 };
 
-/* Dark mode toggle */
+/* Dark mode toggle + localStorage 记忆 */
+function applyTheme(theme) {
+  document.body.classList.toggle('dark', theme === 'dark');
+}
+
+function initTheme() {
+  // 默认使用 dark
+  var savedTheme = 'dark';
+
+  // 如果用户之前在 localStorage 保存过主题，则优先使用
+  try {
+    var stored = localStorage.getItem('textpad-theme');
+    if (stored === 'light' || stored === 'dark') {
+      savedTheme = stored;
+    }
+  } catch (e) {
+    // localStorage 不可用时忽略，仍使用默认 dark
+  }
+
+  applyTheme(savedTheme);
+}
+
 document.getElementById('toggleDarkBtn').onclick = function() {
-  document.body.classList.toggle('dark');
+  var isDark = document.body.classList.toggle('dark');
+  try {
+    localStorage.setItem('textpad-theme', isDark ? 'dark' : 'light');
+  } catch (e) {
+    // 忽略 localStorage 错误
+  }
 };
 
 /* Initialize */
+initTheme();
 textarea.oninput = updateLinks;
 updateLinks();
 textarea.focus();
